@@ -1,0 +1,22 @@
+name: Handtime # Name of the deployment
+
+on:
+  push: # Trigger the workflow when changes are pushed
+    branches:
+      - main
+jobs: # Any name can be provided
+  build-and-deploy:
+    runs-on: ubuntu-latest # Latest version of Ubuntu
+    steps:
+      - name: Checkout # Check out the repository's code into the workflow's execution environment.
+        uses: actions/checkout@v1 # Script actions
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Deploy static site to S3 bucket
+        run: aws s3 sync . s3://handtime --delete # Change bucket name
